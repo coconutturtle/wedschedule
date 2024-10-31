@@ -33,48 +33,6 @@
             margin: 0;
         }
 
-        /* Elegant TOC styles for desktop */
-        .toc {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 250px;
-            max-height: 80vh;
-            overflow-y: auto;
-            background-color: #fff;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .toc h2 {
-            font-size: 1.4em;
-            color: #a52a2a;
-            font-family: 'Niconne', cursive;
-            margin-bottom: 15px;
-        }
-
-        .toc h3 {
-            font-size: 1.2em;
-            color: #a52a2a;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
-
-        .toc ul {
-            list-style: none;
-            padding: 0;
-            font-size: 1em;
-            line-height: 1.6em;
-            margin-left: 15px;
-        }
-
-        .toc a {
-            color: #444;
-            text-decoration: none;
-        }
-
         /* Main content */
         main {
             max-width: 800px;
@@ -117,75 +75,73 @@
             position: relative;
         }
 
-        /* Mobile TOC */
-        @media (max-width: 420px) {
-            .toc {
-                display: none; /* Hide the full TOC on mobile */
-            }
+        /* Single TOC - Floating Icon and Overlay */
+        .toc-icon {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: #a52a2a;
+            color: white;
+            padding: 12px;
+            border-radius: 50%;
+            font-size: 1.2em;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
 
-            /* Floating TOC icon */
-            .toc-icon {
-                position: fixed;
-                bottom: 80px;
-                right: 20px;
-                background-color: #a52a2a;
-                color: white;
-                padding: 12px;
-                border-radius: 50%;
-                font-size: 1.2em;
-                cursor: pointer;
-                width: 50px;
-                height: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
+        .toc-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
 
-            .toc-overlay {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: #fff;
-                z-index: 1000;
-                padding: 20px;
-                overflow-y: auto;
-            }
+        .toc-overlay h2 {
+            font-size: 1.4em;
+            color: #a52a2a;
+            font-family: 'Niconne', cursive;
+            margin-bottom: 15px;
+        }
 
-            .toc-overlay h3 {
-                font-size: 1.2em;
-                color: #a52a2a;
-                margin-top: 10px;
-                margin-bottom: 5px;
-            }
+        .toc-overlay h3 {
+            font-size: 1.2em;
+            color: #a52a2a;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
 
-            .toc-overlay ul {
-                list-style: none;
-                padding: 0;
-                font-size: 1.1em;
-                line-height: 1.8em;
-                margin-left: 15px;
-            }
+        .toc-overlay ul {
+            list-style: none;
+            padding: 0;
+            font-size: 1.1em;
+            line-height: 1.8em;
+            margin-left: 15px;
+        }
 
-            .toc-overlay a {
-                color: #444;
-                text-decoration: none;
-            }
+        .toc-overlay a {
+            color: #444;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 
-<div class="toc" id="toc">
-    <h2>Table of Contents</h2>
-</div>
-
-<!-- Floating TOC icon for mobile -->
+<!-- Floating TOC icon -->
 <div class="toc-icon" onclick="toggleTOC()">☰</div>
 
-<!-- TOC overlay for mobile -->
+<!-- TOC overlay -->
 <div class="toc-overlay" id="toc-overlay" onclick="toggleTOC()">
     <div onclick="event.stopPropagation();">
         <h2>Table of Contents</h2>
@@ -211,8 +167,7 @@
     async function loadEvents() {
         const response = await fetch('events.json');
         const events = await response.json();
-        const tocListDesktop = document.getElementById('toc');
-        const tocOverlayMobile = document.querySelector('.toc-overlay > div');
+        const tocOverlayContent = document.querySelector('.toc-overlay > div');
         const eventsContainer = document.getElementById('events-container');
         
         // Group events by date
@@ -223,18 +178,15 @@
         }, {});
 
         for (const [date, events] of Object.entries(groupedEvents)) {
-            createDateHeading(tocListDesktop, date);
-            createDateHeading(tocOverlayMobile, date);
-            const eventListDesktop = document.createElement('ul');
-            const eventListMobile = document.createElement('ul');
+            createDateHeading(tocOverlayContent, date);
+            const eventList = document.createElement('ul');
 
             events.forEach(event => {
-                createTOCEntry(event, eventListDesktop, eventListMobile);
+                createTOCEntry(event, eventList);
                 createEventSection(event, eventsContainer);
             });
 
-            tocListDesktop.appendChild(eventListDesktop);
-            tocOverlayMobile.appendChild(eventListMobile);
+            tocOverlayContent.appendChild(eventList);
         }
     }
 
@@ -244,17 +196,14 @@
         parent.appendChild(dateHeading);
     }
 
-    function createTOCEntry(event, listDesktop, listMobile) {
-        const tocItemDesktop = document.createElement('li');
-        const tocLinkDesktop = document.createElement('a');
-        tocLinkDesktop.href = `#${event.id}`;
-        tocLinkDesktop.textContent = event.title;
-        tocItemDesktop.appendChild(tocLinkDesktop);
-        listDesktop.appendChild(tocItemDesktop);
-
-        const tocItemMobile = tocItemDesktop.cloneNode(true);
-        tocItemMobile.onclick = () => closeTOC();
-        listMobile.appendChild(tocItemMobile);
+    function createTOCEntry(event, list) {
+        const tocItem = document.createElement('li');
+        const tocLink = document.createElement('a');
+        tocLink.href = `#${event.id}`;
+        tocLink.textContent = event.title;
+        tocLink.onclick = () => closeTOC(); // Close overlay on mobile when a link is clicked
+        tocItem.appendChild(tocLink);
+        list.appendChild(tocItem);
     }
 
     function createEventSection(event, container) {
