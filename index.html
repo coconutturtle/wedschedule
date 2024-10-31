@@ -130,7 +130,7 @@
         /* Floating TOC icon for mobile */
         @media (max-width: 420px) {
             .toc {
-                display: none; /* Hide the full TOC */
+                display: none; /* Hide the full TOC on mobile */
             }
 
             /* Floating TOC icon */
@@ -180,18 +180,6 @@
             .toc-overlay a:hover {
                 text-decoration: underline;
             }
-
-            /* Close button for overlay */
-            .close-btn {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                font-size: 1.5em;
-                cursor: pointer;
-                background: none;
-                border: none;
-                color: white;
-            }
         }
     </style>
 </head>
@@ -208,12 +196,13 @@
 <div class="toc-icon" onclick="toggleTOC()">☰</div>
 
 <!-- TOC overlay for mobile -->
-<div class="toc-overlay" id="toc-overlay">
-    <button class="close-btn" onclick="toggleTOC()">×</button>
-    <h2>Table of Contents</h2>
-    <ul id="toc-list-overlay">
-        <!-- Mobile TOC list will be generated here -->
-    </ul>
+<div class="toc-overlay" id="toc-overlay" onclick="toggleTOC()">
+    <div onclick="event.stopPropagation();">
+        <h2>Table of Contents</h2>
+        <ul id="toc-list-overlay">
+            <!-- Mobile TOC list will be generated here -->
+        </ul>
+    </div>
 </div>
 
 <main>
@@ -250,16 +239,16 @@
                 tocList.appendChild(tocItem);
                 tocListOverlay.appendChild(tocItem.cloneNode(true));
 
-                // Split content into sentences
-                const sentences = event.content.match(/[^.!?]+[.!?]*/g) || []; // Split by sentence
+                // Split content by sentence
+                const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
                 const isLongContent = sentences.length > 1;
                 
-                // Construct the preview and hidden content
+                // Define preview and remaining content
                 const previewContent = sentences[0];
                 const remainingContent = sentences.slice(1).join(' ');
 
-                // Create Event Section HTML
-                eventDiv = document.createElement('div');
+                // Create Event Section
+                const eventDiv = document.createElement('div');
                 eventDiv.classList.add('event');
                 eventDiv.id = event.id;
 
@@ -298,7 +287,6 @@
     // Load events on page load
     loadEvents();
 </script>
-
 
 </body>
 </html>
