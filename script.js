@@ -51,7 +51,7 @@ function createEventSection(event, container) {
     eventDiv.innerHTML = `
         <h2>${event.title}</h2>
         <h3>${event.date}</h3>
-        <p>${previewContent}<span class="more-text" style="display: none;">${remainingContent}</span></p>
+        <p>${previewContent}<span class="more-text">${remainingContent}</span></p>
         ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
     `;
     container.appendChild(eventDiv);
@@ -60,18 +60,21 @@ function createEventSection(event, container) {
 function toggleText(button) {
     const allButtons = document.querySelectorAll('.show-more-btn');
     const moreText = button.previousElementSibling.querySelector('.more-text');
+
     allButtons.forEach(btn => {
         const otherText = btn.previousElementSibling.querySelector('.more-text');
-        if (btn !== button && otherText) otherText.style.display = 'none';
-        if (btn !== button) btn.textContent = 'Show more';
+        if (btn !== button && otherText) {
+            otherText.classList.remove('open');
+            btn.textContent = 'Show more';
+        }
     });
 
-    if (moreText.style.display === 'none' || moreText.style.display === '') {
-        moreText.style.display = 'inline';
-        button.textContent = 'Show less';
-    } else {
-        moreText.style.display = 'none';
+    if (moreText.classList.contains('open')) {
+        moreText.classList.remove('open');
         button.textContent = 'Show more';
+    } else {
+        moreText.classList.add('open');
+        button.textContent = 'Show less';
     }
 }
 
