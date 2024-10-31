@@ -93,6 +93,15 @@
         <button class="show-more-btn" onclick="toggleText(this)">Show more</button>
     </div>
 
+    <div class="event">
+        <h2>Kalyanam Soluthal - Proclamation of Marriage</h2>
+        <h3>Saturday, Nov 23</h3>
+        <p>Following Muhurtha Kaal Undruthal, the immediate family of the bride and groom formally invite the grandparents, aunts, and uncles to the wedding.
+            <span class="more-text">This marks the formal beginning of the wedding celebration as elders are invited to bless the upcoming ceremony.</span>
+        </p>
+        <button class="show-more-btn" onclick="toggleText(this)">Show more</button>
+    </div>
+
     <!-- Repeat similar structure for other events -->
 
 </main>
@@ -103,6 +112,21 @@
 
 <script>
     function toggleText(button) {
+        // Close all other expanded sections
+        const allMoreText = document.querySelectorAll('.more-text');
+        const allButtons = document.querySelectorAll('.show-more-btn');
+        allMoreText.forEach((text) => {
+            if (text !== button.previousElementSibling.querySelector('.more-text')) {
+                text.style.display = 'none';
+            }
+        });
+        allButtons.forEach((btn) => {
+            if (btn !== button) {
+                btn.textContent = 'Show more';
+            }
+        });
+
+        // Toggle the selected section
         const moreText = button.previousElementSibling.querySelector('.more-text');
         if (moreText.style.display === 'none' || moreText.style.display === '') {
             moreText.style.display = 'inline';
