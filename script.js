@@ -34,7 +34,16 @@ function createTOCEntry(event, list) {
     const tocLink = document.createElement('a');
     tocLink.href = `#${event.id}`;
     tocLink.textContent = event.title;
-    tocLink.onclick = () => closeTOC();
+
+    // Smooth scroll on link click
+    tocLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById(event.id).scrollIntoView({
+            behavior: 'smooth'
+        });
+        closeTOC();
+    });
+
     tocItem.appendChild(tocLink);
     list.appendChild(tocItem);
 }
