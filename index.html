@@ -255,12 +255,18 @@
                 eventDiv.classList.add('event');
                 eventDiv.id = event.id;
 
+                // Split content into initial text and remaining text for "Show more" functionality
+                const previewLength = 100; // Customize as desired
+                const isLongContent = event.content.length > previewLength;
+
                 eventDiv.innerHTML = `
                     <h2>${event.title}</h2>
                     <h3>${event.date}</h3>
                     <p class="description">${event.description}</p>
-                    <p>${event.content.substring(0, 100)}<span class="more-text" style="display: none;">${event.content.substring(100)}</span></p>
-                    <button class="show-more-btn" onclick="toggleText(this)">Show more</button>
+                    <p>${isLongContent ? event.content.substring(0, previewLength) : event.content}
+                        <span class="more-text" style="display: none;">${isLongContent ? event.content.substring(previewLength) : ''}</span>
+                    </p>
+                    ${isLongContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
                 `;
                 eventsContainer.appendChild(eventDiv);
             });
