@@ -56,21 +56,29 @@
             margin-bottom: 15px;
         }
 
+        .toc h3 {
+            font-size: 1.2em;
+            color: #a52a2a;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
         .toc ul {
             list-style: none;
             padding: 0;
             font-size: 1em;
             line-height: 1.6em;
+            margin-left: 15px;
         }
 
         .toc li {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .toc a {
-            color: #a52a2a;
+            color: #444;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: normal;
         }
 
         .toc a:hover {
@@ -172,21 +180,29 @@
                 overflow-y: auto;
             }
 
+            .toc-overlay h3 {
+                font-size: 1.2em;
+                color: #a52a2a;
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }
+
             .toc-overlay ul {
                 list-style: none;
                 padding: 0;
                 font-size: 1.1em;
                 line-height: 1.8em;
+                margin-left: 15px;
             }
 
             .toc-overlay li {
-                margin-bottom: 12px;
+                margin-bottom: 5px;
             }
 
             .toc-overlay a {
-                color: #a52a2a;
-                font-weight: bold;
+                color: #444;
                 text-decoration: none;
+                font-weight: normal;
             }
 
             .toc-overlay a:hover {
@@ -199,9 +215,7 @@
 
 <div class="toc" id="toc">
     <h2>Table of Contents</h2>
-    <ul id="toc-list">
-        <!-- Desktop TOC will be generated here and organized by date -->
-    </ul>
+    <!-- Desktop TOC with dates as headings and events as subheadings will be generated here -->
 </div>
 
 <!-- Floating TOC icon for mobile -->
@@ -211,9 +225,7 @@
 <div class="toc-overlay" id="toc-overlay" onclick="toggleTOC()">
     <div onclick="event.stopPropagation();">
         <h2>Table of Contents</h2>
-        <ul id="toc-list-overlay">
-            <!-- Mobile TOC list will be generated here -->
-        </ul>
+        <!-- Mobile TOC with dates as headings and events as subheadings will be generated here -->
     </div>
 </div>
 
@@ -241,44 +253,71 @@
             // Sort events by date
             events = events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            const tocList = document.getElementById('toc-list');
-            const tocListOverlay = document.getElementById('toc-list-overlay');
+            const tocList = document.getElementById('toc');
+            const tocOverlay = document.querySelector('.toc-overlay > div');
             const eventsContainer = document.getElementById('events-container');
 
-            events.forEach(event => {
-                // Create TOC items for desktop and mobile
-                const tocItem = document.createElement('li');
-                const tocLink = document.createElement('a');
-                tocLink.href = `#${event.id}`;
-                tocLink.textContent = `${event.date} - ${event.title}`;
-                tocItem.appendChild(tocLink);
-                tocList.appendChild(tocItem);
-                tocListOverlay.appendChild(tocItem.cloneNode(true));
+            // Group events by date
+            const groupedEvents = events.reduce((acc, event) => {
+                if (!acc[event.date]) acc[event.date] = [];
+                acc[event.date].push(event);
+                return acc;
+            }, {});
 
-                // Split content by sentence
-                const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
-                const isLongContent = sentences.length > 1;
-                
-                // Define preview and remaining content
-                const previewContent = sentences[0];
-                const remainingContent = sentences.slice(1).join(' ');
+            for (const [date, events] of Object.entries(groupedEvents)) {
+                // Create Date Heading for Desktop TOC
+                const dateHeadingDesktop = document.createElement('h3');
+                dateHeadingDesktop.textContent = date;
+                tocList.appendChild(dateHeadingDesktop);
 
-                // Create Event Section
-                const eventDiv = document.createElement('div');
-                eventDiv.classList.add('event');
-                eventDiv.id = event.id;
+                // Create Date Heading for Mobile TOC
+                const dateHeadingMobile = document.createElement('h3');
+                dateHeadingMobile.textContent = date;
+                tocOverlay.appendChild(dateHeadingMobile);
 
-                eventDiv.innerHTML = `
-                    <h2>${event.title}</h2>
-                    <h3>${event.date}</h3>
-                    <p class="description">${event.description}</p>
-                    <p>${previewContent}
-                        <span class="more-text" style="display: none;">${remainingContent}</span>
-                    </p>
-                    ${isLongContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
-                `;
-                eventsContainer.appendChild(eventDiv);
-            });
+                const eventListDesktop = document.createElement('ul');
+                const eventListMobile = document.createElement('ul');
+
+                events.forEach(event => {
+                    // Create TOC items for each event under the date heading
+                    const tocItemDesktop = document.createElement('li');
+                    const tocLinkDesktop = document.createElement('a');
+                    tocLinkDesktop.href = `#${event.id}`;
+                    tocLinkDesktop.textContent = event.title;
+                    tocItemDesktop.appendChild(tocLinkDesktop);
+                    eventListDesktop.appendChild(tocItemDesktop);
+
+                    const tocItemMobile = tocItemDesktop.cloneNode(true);
+                    eventListMobile.appendChild(tocItemMobile);
+
+                    // Split content by sentence
+                    const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
+                    const isLongContent = sentences.length > 1;
+                    
+                    // Define preview and remaining content
+                    const previewContent = sentences[0];
+                    const remainingContent = sentences.slice(1).join(' ');
+
+                    // Create Event Section
+                    const eventDiv = document.createElement('div');
+                    eventDiv.classList.add('event');
+                    eventDiv.id = event.id;
+
+                    eventDiv.innerHTML = `
+                        <h2>${event.title}</h2>
+                        <h3>${event.date}</h3>
+                        <p class="description">${event.description}</p>
+                        <p>${previewContent}
+                            <span class="more-text" style="display: none;">${remainingContent}</span>
+                        </p>
+                        ${isLongContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
+                    `;
+                    eventsContainer.appendChild(eventDiv);
+                });
+
+                tocList.appendChild(eventListDesktop);
+                tocOverlay.appendChild(eventListMobile);
+            }
         } catch (error) {
             console.error('Error loading events:', error);
         }
