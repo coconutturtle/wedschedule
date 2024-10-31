@@ -19,6 +19,61 @@
         "date": "Tuesday, Nov 26",
         "description": "A prayer ceremony for blessings",
         "content": "It is customary to start by praying to God and ancestors before any good event. The family prays that the marriage should go well without any hindrance and that the bride and groom be blessed with the 16 virtues, including Knowledge, Longevity, Dexterity, Youth, and Perseverance."
+    },
+    {
+        "id": "kudi-aaki-unuthal",
+        "title": "Kudi Aaki Unuthal - Gathering",
+        "date": "Tuesday, Nov 26",
+        "description": "The start of family gatherings and feasts",
+        "content": "Two days before the wedding, the extended family starts gathering at the wedding house and formal feast festivities kick off."
+    },
+    {
+        "id": "mulaipaari-poduthal",
+        "title": "Mulaipaari Poduthal - Sprouting",
+        "date": "Wednesday, Nov 27",
+        "description": "Symbolic rituals for growth and prosperity",
+        "content": "The groom’s family soaks navadaniyam (nine seeds) to sprout, symbolizing the couple’s growth. They also build a straw stack representing a fort, which the couple steps over after tying the knot."
+    },
+    {
+        "id": "thumbu-pidithal",
+        "title": "Thumbu Pidithal",
+        "date": "Wednesday, Nov 27",
+        "description": "Ceremony invoking divine presence",
+        "content": "The day before the wedding, two married women draw a temple pattern on the wall using thread and rice batter. This ceremony is known as Thumbu Pidithal and represents inviting the presence of God."
+    },
+    {
+        "id": "kaluthiru-vankuthal",
+        "title": "Kaluthiru Vankuthal and Korthal",
+        "date": "Wednesday, Nov 27",
+        "description": "Preparation of the traditional wedding jewelry",
+        "content": "The groom’s family collects the Kaluthiru (a unique gold necklace) from the bride’s family and prepares it for the wedding ceremony."
+    },
+    {
+        "id": "puram-kalithal",
+        "title": "Puram Kalithal",
+        "date": "Thursday, Nov 28, Early morning",
+        "description": "Protection ritual for the bride",
+        "content": "In the early morning of the wedding, the bride’s paternal aunt places neem leaves on her to ward off evil spirits."
+    },
+    {
+        "id": "thirupootuthal",
+        "title": "Thirupootuthal - Tying of the Knot",
+        "date": "Thursday, Nov 28, 10 AM",
+        "description": "The main wedding ceremony",
+        "content": "The bride and groom are brought to the manai, where the groom ties the Kaluthiru around the bride’s neck with three knots. This ceremony is the official wedding, symbolizing the union of the couple and blessings for prosperity and happiness."
+    },
+    {
+        "id": "isaipidimanam",
+        "title": "Isaipidimanam - Formal Marriage Agreement",
+        "date": "Thursday, Nov 28, 11:30 AM",
+        "description": "Official registration of the marriage",
+        "content": "After the Thirupootuthal, the fathers of the bride and groom register the wedding in the temple book, a traditional Chettiar practice."
+    },
+    {
+        "id": "mamiyar-nathanar",
+        "title": "Mamiyar and Nathanar Thiruputum Sadangu",
+        "date": "Thursday, Nov 28, 11:30 AM",
+        "description": "Rituals welcoming the bride into the groom’s family",
+        "content": "In this ritual, the groom’s mother and sister welcome the bride by blessing her with symbolic items like silver Lord Ganesha, turmeric, and rice."
     }
-    // Add more events as needed
 ]
