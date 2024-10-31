@@ -22,13 +22,14 @@
             text-align: center;
             background-color: #a52a2a;
             color: #fff;
-            padding: 20px;
+            padding: 10px 20px;
             width: 100%;
+            box-sizing: border-box;
         }
 
         header h1 {
             font-family: 'Niconne', cursive;
-            font-size: 2.5em;
+            font-size: 2em;
             margin: 0;
         }
 
@@ -75,7 +76,8 @@
         /* Main content */
         main {
             max-width: 800px;
-            margin: 20px;
+            width: 100%;
+            margin: 20px 10px;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -90,13 +92,13 @@
 
         .event h2 {
             color: #a52a2a;
-            font-size: 1.8em;
+            font-size: 1.5em;
             margin-bottom: 5px;
         }
 
         .event h3 {
             color: #666;
-            font-size: 1.2em;
+            font-size: 1.1em;
             margin-bottom: 5px;
         }
 
@@ -122,40 +124,73 @@
             text-align: center;
             padding: 10px;
             width: 100%;
-            position: fixed;
-            bottom: 0;
+            position: relative;
         }
 
-        /* Responsive styles for iPhone 13 */
+        /* Floating TOC icon for mobile */
         @media (max-width: 420px) {
             .toc {
-                position: static;
+                display: none; /* Hide the full TOC */
+            }
+
+            /* Floating TOC icon */
+            .toc-icon {
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                background-color: #a52a2a;
+                color: white;
+                padding: 10px;
+                border-radius: 50%;
+                font-size: 1.2em;
+                cursor: pointer;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            }
+
+            /* TOC overlay */
+            .toc-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
                 width: 100%;
-                margin-bottom: 20px;
-                box-shadow: none;
-                max-height: none;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                z-index: 1000;
+                padding: 20px;
+                box-sizing: border-box;
             }
 
-            main {
-                margin: 0 10px;
-                padding: 15px;
+            .toc-overlay ul {
+                list-style: none;
+                padding: 0;
             }
 
-            header h1 {
-                font-size: 2em;
+            .toc-overlay li {
+                margin-bottom: 10px;
             }
 
-            .event h2 {
+            .toc-overlay a {
+                color: white;
+                font-size: 1.2em;
+                text-decoration: none;
+            }
+
+            .toc-overlay a:hover {
+                text-decoration: underline;
+            }
+
+            /* Close button for overlay */
+            .close-btn {
+                position: absolute;
+                top: 20px;
+                right: 20px;
                 font-size: 1.5em;
-            }
-
-            .event h3 {
-                font-size: 1.1em;
-            }
-
-            footer {
-                position: relative;
-                bottom: 0;
+                cursor: pointer;
+                background: none;
+                border: none;
+                color: white;
             }
         }
     </style>
@@ -166,6 +201,18 @@
     <h2>Table of Contents</h2>
     <ul id="toc-list">
         <!-- Table of contents will be generated here -->
+    </ul>
+</div>
+
+<!-- Floating TOC icon for mobile -->
+<div class="toc-icon" onclick="toggleTOC()">☰</div>
+
+<!-- TOC overlay for mobile -->
+<div class="toc-overlay" id="toc-overlay">
+    <button class="close-btn" onclick="toggleTOC()">×</button>
+    <h2>Table of Contents</h2>
+    <ul id="toc-list-overlay">
+        <!-- Mobile TOC list will be generated here -->
     </ul>
 </div>
 
@@ -190,16 +237,18 @@
             const response = await fetch('events.json');
             const events = await response.json();
             const tocList = document.getElementById('toc-list');
+            const tocListOverlay = document.getElementById('toc-list-overlay');
             const eventsContainer = document.getElementById('events-container');
 
             events.forEach(event => {
-                // Create Table of Contents Item
+                // Create TOC items for desktop and mobile
                 const tocItem = document.createElement('li');
                 const tocLink = document.createElement('a');
                 tocLink.href = `#${event.id}`;
                 tocLink.textContent = event.title;
                 tocItem.appendChild(tocLink);
                 tocList.appendChild(tocItem);
+                tocListOverlay.appendChild(tocItem.cloneNode(true));
 
                 // Create Event Section
                 const eventDiv = document.createElement('div');
@@ -229,6 +278,11 @@
             moreText.style.display = 'none';
             button.textContent = 'Show more';
         }
+    }
+
+    function toggleTOC() {
+        const tocOverlay = document.getElementById('toc-overlay');
+        tocOverlay.style.display = tocOverlay.style.display === 'block' ? 'none' : 'block';
     }
 
     // Load events on page load
