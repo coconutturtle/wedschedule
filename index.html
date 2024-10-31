@@ -143,21 +143,21 @@
             text-align: left;
         }
 
-        .toc-overlay h2 {
+        .toc-content h2 {
             font-size: 1.4em;
             color: #a52a2a;
             font-family: 'Niconne', cursive;
             margin-bottom: 15px;
         }
 
-        .toc-overlay h3 {
+        .toc-content h3 {
             font-size: 1.2em;
             color: #a52a2a;
             margin-top: 10px;
             margin-bottom: 5px;
         }
 
-        .toc-overlay ul {
+        .toc-content ul {
             list-style: none;
             padding: 0;
             font-size: 1.1em;
@@ -165,13 +165,13 @@
             margin-left: 15px;
         }
 
-        .toc-overlay a {
+        .toc-content a {
             color: #444;
             text-decoration: none;
             transition: color 0.3s;
         }
 
-        .toc-overlay a:hover {
+        .toc-content a:hover {
             color: #a20000;
         }
 
@@ -193,7 +193,7 @@
 <!-- TOC overlay -->
 <div class="toc-overlay" id="toc-overlay" onclick="toggleTOC()">
     <div class="toc-content" onclick="event.stopPropagation();">
-        <h2 id="toc-title"></h2>
+        <h2 id="toc-title">Table of Contents</h2>
         <!-- TOC entries will be appended here -->
     </div>
 </div>
@@ -214,11 +214,7 @@
 </footer>
 
 <script>
-    // Define TOC title
-    const TOC_TITLE = "Table of Contents";
-
     async function loadEvents() {
-        document.getElementById('toc-title').textContent = TOC_TITLE;
         const response = await fetch('events.json');
         const events = await response.json();
         const tocOverlayContent = document.querySelector('.toc-content');
