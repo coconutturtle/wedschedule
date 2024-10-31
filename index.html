@@ -46,7 +46,6 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            font-family: 'Inter', sans-serif;
         }
 
         .toc h2 {
@@ -71,18 +70,9 @@
             margin-left: 15px;
         }
 
-        .toc li {
-            margin-bottom: 5px;
-        }
-
         .toc a {
             color: #444;
             text-decoration: none;
-            font-weight: normal;
-        }
-
-        .toc a:hover {
-            text-decoration: underline;
         }
 
         /* Main content */
@@ -108,18 +98,6 @@
             margin-bottom: 5px;
         }
 
-        .event h3 {
-            color: #666;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-        }
-
-        .event .description {
-            font-style: italic;
-            color: #444;
-            margin: 0 0 10px;
-        }
-
         .show-more-btn {
             color: #a52a2a;
             cursor: pointer;
@@ -139,7 +117,7 @@
             position: relative;
         }
 
-        /* Floating TOC icon for mobile */
+        /* Mobile TOC */
         @media (max-width: 420px) {
             .toc {
                 display: none; /* Hide the full TOC on mobile */
@@ -156,15 +134,13 @@
                 border-radius: 50%;
                 font-size: 1.2em;
                 cursor: pointer;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                width: 50px;
+                height: 50px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 50px;
-                height: 50px;
             }
 
-            /* TOC overlay */
             .toc-overlay {
                 display: none;
                 position: fixed;
@@ -173,10 +149,8 @@
                 width: 100%;
                 height: 100%;
                 background-color: #fff;
-                color: #333;
                 z-index: 1000;
                 padding: 20px;
-                box-sizing: border-box;
                 overflow-y: auto;
             }
 
@@ -195,18 +169,9 @@
                 margin-left: 15px;
             }
 
-            .toc-overlay li {
-                margin-bottom: 5px;
-            }
-
             .toc-overlay a {
                 color: #444;
                 text-decoration: none;
-                font-weight: normal;
-            }
-
-            .toc-overlay a:hover {
-                text-decoration: underline;
             }
         }
     </style>
@@ -215,7 +180,6 @@
 
 <div class="toc" id="toc">
     <h2>Table of Contents</h2>
-    <!-- Desktop TOC with dates as headings and events as subheadings will be generated here -->
 </div>
 
 <!-- Floating TOC icon for mobile -->
@@ -225,7 +189,6 @@
 <div class="toc-overlay" id="toc-overlay" onclick="toggleTOC()">
     <div onclick="event.stopPropagation();">
         <h2>Table of Contents</h2>
-        <!-- Mobile TOC with dates as headings and events as subheadings will be generated here -->
     </div>
 </div>
 
@@ -246,87 +209,81 @@
 
 <script>
     async function loadEvents() {
-        try {
-            const response = await fetch('events.json');
-            let events = await response.json();
+        const response = await fetch('events.json');
+        const events = await response.json();
+        const tocListDesktop = document.getElementById('toc');
+        const tocOverlayMobile = document.querySelector('.toc-overlay > div');
+        const eventsContainer = document.getElementById('events-container');
+        
+        // Group events by date
+        const groupedEvents = events.reduce((acc, event) => {
+            if (!acc[event.date]) acc[event.date] = [];
+            acc[event.date].push(event);
+            return acc;
+        }, {});
 
-            // Sort events by date
-            events = events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        for (const [date, events] of Object.entries(groupedEvents)) {
+            createDateHeading(tocListDesktop, date);
+            createDateHeading(tocOverlayMobile, date);
+            const eventListDesktop = document.createElement('ul');
+            const eventListMobile = document.createElement('ul');
 
-            const tocListDesktop = document.getElementById('toc');
-            const tocOverlayMobile = document.querySelector('.toc-overlay > div');
-            const eventsContainer = document.getElementById('events-container');
+            events.forEach(event => {
+                createTOCEntry(event, eventListDesktop, eventListMobile);
+                createEventSection(event, eventsContainer);
+            });
 
-            // Group events by date
-            const groupedEvents = events.reduce((acc, event) => {
-                if (!acc[event.date]) acc[event.date] = [];
-                acc[event.date].push(event);
-                return acc;
-            }, {});
-
-            for (const [date, events] of Object.entries(groupedEvents)) {
-                // Create Date Heading for Desktop TOC
-                const dateHeadingDesktop = document.createElement('h3');
-                dateHeadingDesktop.textContent = date;
-                tocListDesktop.appendChild(dateHeadingDesktop);
-
-                // Create Date Heading for Mobile TOC
-                const dateHeadingMobile = document.createElement('h3');
-                dateHeadingMobile.textContent = date;
-                tocOverlayMobile.appendChild(dateHeadingMobile);
-
-                const eventListDesktop = document.createElement('ul');
-                const eventListMobile = document.createElement('ul');
-
-                events.forEach(event => {
-                    // Create TOC items for each event under the date heading
-                    const tocItemDesktop = document.createElement('li');
-                    const tocLinkDesktop = document.createElement('a');
-                    tocLinkDesktop.href = `#${event.id}`;
-                    tocLinkDesktop.textContent = event.title;
-                    tocLinkDesktop.onclick = () => closeTOC(); // Close overlay on mobile when a link is clicked
-                    tocItemDesktop.appendChild(tocLinkDesktop);
-                    eventListDesktop.appendChild(tocItemDesktop);
-
-                    const tocItemMobile = tocItemDesktop.cloneNode(true);
-                    tocItemMobile.onclick = () => closeTOC();
-                    eventListMobile.appendChild(tocItemMobile);
-
-                    // Split content by sentence
-                    const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
-                    const isLongContent = sentences.length > 1;
-                    
-                    // Define preview and remaining content
-                    const previewContent = sentences[0];
-                    const remainingContent = sentences.slice(1).join(' ');
-
-                    // Create Event Section
-                    const eventDiv = document.createElement('div');
-                    eventDiv.classList.add('event');
-                    eventDiv.id = event.id;
-
-                    eventDiv.innerHTML = `
-                        <h2>${event.title}</h2>
-                        <h3>${event.date}</h3>
-                        <p class="description">${event.description}</p>
-                        <p>${previewContent}
-                            <span class="more-text" style="display: none;">${remainingContent}</span>
-                        </p>
-                        ${isLongContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
-                    `;
-                    eventsContainer.appendChild(eventDiv);
-                });
-
-                tocListDesktop.appendChild(eventListDesktop);
-                tocOverlayMobile.appendChild(eventListMobile);
-            }
-        } catch (error) {
-            console.error('Error loading events:', error);
+            tocListDesktop.appendChild(eventListDesktop);
+            tocOverlayMobile.appendChild(eventListMobile);
         }
     }
 
+    function createDateHeading(parent, date) {
+        const dateHeading = document.createElement('h3');
+        dateHeading.textContent = date;
+        parent.appendChild(dateHeading);
+    }
+
+    function createTOCEntry(event, listDesktop, listMobile) {
+        const tocItemDesktop = document.createElement('li');
+        const tocLinkDesktop = document.createElement('a');
+        tocLinkDesktop.href = `#${event.id}`;
+        tocLinkDesktop.textContent = event.title;
+        tocItemDesktop.appendChild(tocLinkDesktop);
+        listDesktop.appendChild(tocItemDesktop);
+
+        const tocItemMobile = tocItemDesktop.cloneNode(true);
+        tocItemMobile.onclick = () => closeTOC();
+        listMobile.appendChild(tocItemMobile);
+    }
+
+    function createEventSection(event, container) {
+        const eventDiv = document.createElement('div');
+        eventDiv.classList.add('event');
+        eventDiv.id = event.id;
+
+        const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
+        const previewContent = sentences[0];
+        const remainingContent = sentences.slice(1).join(' ');
+
+        eventDiv.innerHTML = `
+            <h2>${event.title}</h2>
+            <h3>${event.date}</h3>
+            <p>${previewContent}<span class="more-text" style="display: none;">${remainingContent}</span></p>
+            ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
+        `;
+        container.appendChild(eventDiv);
+    }
+
     function toggleText(button) {
+        const allButtons = document.querySelectorAll('.show-more-btn');
         const moreText = button.previousElementSibling.querySelector('.more-text');
+        allButtons.forEach(btn => {
+            const otherText = btn.previousElementSibling.querySelector('.more-text');
+            if (btn !== button && otherText) otherText.style.display = 'none';
+            if (btn !== button) btn.textContent = 'Show more';
+        });
+
         if (moreText.style.display === 'none' || moreText.style.display === '') {
             moreText.style.display = 'inline';
             button.textContent = 'Show less';
@@ -342,9 +299,7 @@
     }
 
     function closeTOC() {
-        if (window.innerWidth <= 420) {
-            document.getElementById('toc-overlay').style.display = 'none';
-        }
+        document.getElementById('toc-overlay').style.display = 'none';
     }
 
     // Load events on page load
