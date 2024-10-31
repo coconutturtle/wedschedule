@@ -35,11 +35,11 @@ main {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Event Styles and Smooth Accordion */
 .event {
     margin: 20px 0;
     padding: 15px;
     border-bottom: 1px solid #ddd;
-    transition: max-height 0.4s ease, opacity 0.4s ease;
 }
 
 .event h2 {
@@ -63,13 +63,18 @@ main {
     color: #666;
 }
 
-footer {
-    background-color: #a52a2a;
-    color: #fff;
-    text-align: center;
-    padding: 10px;
-    width: 100%;
-    position: relative;
+/* Accordion Effect */
+.more-text {
+    display: block;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease-in-out, opacity 0.6s ease-in-out;
+}
+
+.more-text.open {
+    max-height: 500px; /* Large enough to fit most text */
+    opacity: 1;
 }
 
 /* TOC icon and overlay */
