@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Schedule</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Niconne&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -20,8 +20,9 @@
             text-align: center;
         }
         header h1 {
+            font-family: 'Niconne', cursive;
             margin: 0;
-            font-size: 2.5em;
+            font-size: 3em;
         }
         main {
             max-width: 800px;
@@ -30,6 +31,33 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .toc {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #fdf0ea;
+            border-radius: 8px;
+        }
+        .toc h2 {
+            font-size: 1.4em;
+            color: #a52a2a;
+            font-family: 'Niconne', cursive;
+            margin-bottom: 10px;
+        }
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        .toc li {
+            margin-bottom: 5px;
+        }
+        .toc a {
+            color: #a52a2a;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
         }
         .event {
             margin: 20px 0;
@@ -87,7 +115,24 @@
 </header>
 
 <main>
-    <div class="event">
+    <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#muhurtha-kaal-undruthal">Muhurtha Kaal Undruthal</a></li>
+            <li><a href="#kalyanam-soluthal">Kalyanam Soluthal - Proclamation of Marriage</a></li>
+            <li><a href="#kumbuduthal">Kumbuduthal - Offering to God and Ancestors</a></li>
+            <li><a href="#kudi-aaki-unuthal">Kudi Aaki Unuthal - Gathering</a></li>
+            <li><a href="#mulaipaari-poduthal">Mulaipaari Poduthal - Sprouting</a></li>
+            <li><a href="#thumbu-pidithal">Thumbu Pidithal</a></li>
+            <li><a href="#kaluthiru-vankuthal">Kaluthiru Vankuthal and Korthal</a></li>
+            <li><a href="#puram-kalithal">Puram Kalithal</a></li>
+            <li><a href="#thirupootuthal">Thirupootuthal - Tying of the Knot</a></li>
+            <li><a href="#isaipidimanam">Isaipidimanam - Formal Marriage Agreement</a></li>
+            <li><a href="#mamiyar-nathanar">Mamiyar and Nathanar Thiruputum Sadangu</a></li>
+        </ul>
+    </div>
+
+    <div class="event" id="muhurtha-kaal-undruthal">
         <h2>Muhurtha Kaal Undruthal</h2>
         <h3>Friday, Nov 22</h3>
         <p class="description">The start of the wedding rituals</p>
@@ -97,14 +142,14 @@
         <button class="show-more-btn" onclick="toggleText(this)">Show more</button>
     </div>
 
-    <div class="event">
+    <div class="event" id="kalyanam-soluthal">
         <h2>Kalyanam Soluthal - Proclamation of Marriage</h2>
         <h3>Saturday, Nov 23</h3>
         <p class="description">Formal invitation to family elders</p>
         <p>Following Muhurtha Kaal Undruthal, the immediate family of the bride and groom formally invite the grandparents, aunts, and uncles to the wedding.</p>
     </div>
 
-    <div class="event">
+    <div class="event" id="kumbuduthal">
         <h2>Kumbuduthal - Offering to God and Ancestors</h2>
         <h3>Tuesday, Nov 26</h3>
         <p class="description">A prayer ceremony for blessings</p>
@@ -114,14 +159,14 @@
         <button class="show-more-btn" onclick="toggleText(this)">Show more</button>
     </div>
 
-    <div class="event">
+    <div class="event" id="kudi-aaki-unuthal">
         <h2>Kudi Aaki Unuthal - Gathering</h2>
         <h3>Tuesday, Nov 26</h3>
         <p class="description">The start of family gatherings and feasts</p>
         <p>Two days before the wedding, the extended family starts gathering at the wedding house and formal feast festivities kick off.</p>
     </div>
 
-    <div class="event">
+    <div class="event" id="mulaipaari-poduthal">
         <h2>Mulaipaari Poduthal - Sprouting</h2>
         <h3>Wednesday, Nov 27</h3>
         <p class="description">Symbolic rituals for growth and prosperity</p>
@@ -131,28 +176,28 @@
         <button class="show-more-btn" onclick="toggleText(this)">Show more</button>
     </div>
 
-    <div class="event">
+    <div class="event" id="thumbu-pidithal">
         <h2>Thumbu Pidithal</h2>
         <h3>Wednesday, Nov 27</h3>
         <p class="description">Ceremony invoking divine presence</p>
         <p>The day before the wedding, two married women draw a temple pattern on the wall using thread and rice batter.</p>
     </div>
 
-    <div class="event">
+    <div class="event" id="kaluthiru-vankuthal">
         <h2>Kaluthiru Vankuthal and Korthal</h2>
         <h3>Wednesday, Nov 27</h3>
         <p class="description">Preparation of the traditional wedding jewelry</p>
         <p>The groom’s family collects the Kaluthiru (a unique gold necklace) from the bride’s family and prepares it for the wedding ceremony.</p>
     </div>
 
-    <div class="event">
+    <div class="event" id="puram-kalithal">
         <h2>Puram Kalithal</h2>
         <h3>Thursday, Nov 28, Early morning</h3>
         <p class="description">Protection ritual for the bride</p>
         <p>In the early morning of the wedding, the bride’s paternal aunt places neem leaves on her to ward off evil spirits.</p>
     </div>
 
-    <div class="event">
+    <div class="event" id="thirupootuthal">
         <h2>Thirupootuthal - Tying of the Knot</h2>
         <h3>Thursday, Nov 28, 10 AM</h3>
         <p class="description">The main wedding ceremony</p>
@@ -162,14 +207,14 @@
         <button class="show-more-btn" onclick="toggleText(this)">Show more</button>
     </div>
 
-    <div class="event">
+    <div class="event" id="isaipidimanam">
         <h2>Isaipidimanam - Formal Marriage Agreement</h2>
         <h3>Thursday, Nov 28, 11:30 AM</h3>
         <p class="description">Official registration of the marriage</p>
         <p>After the Thirupootuthal, the fathers of the bride and groom register the wedding in the temple book, a traditional Chettiar practice.</p>
     </div>
 
-    <div class="event">
+    <div class="event" id="mamiyar-nathanar">
         <h2>Mamiyar and Nathanar Thiruputum Sadangu</h2>
         <h3>Thursday, Nov 28, 11:30 AM</h3>
         <p class="description">Rituals welcoming the bride into the groom’s family</p>
@@ -183,7 +228,6 @@
 
 <script>
     function toggleText(button) {
-        // Close all other expanded sections
         const allMoreText = document.querySelectorAll('.more-text');
         const allButtons = document.querySelectorAll('.show-more-btn');
         allMoreText.forEach((text) => {
@@ -197,7 +241,6 @@
             }
         });
 
-        // Toggle the selected section
         const moreText = button.previousElementSibling.querySelector('.more-text');
         if (moreText.style.display === 'none' || moreText.style.display === '') {
             moreText.style.display = 'inline';
