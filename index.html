@@ -253,8 +253,8 @@
             // Sort events by date
             events = events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            const tocList = document.getElementById('toc');
-            const tocOverlay = document.querySelector('.toc-overlay > div');
+            const tocListDesktop = document.getElementById('toc');
+            const tocOverlayMobile = document.querySelector('.toc-overlay > div');
             const eventsContainer = document.getElementById('events-container');
 
             // Group events by date
@@ -268,12 +268,12 @@
                 // Create Date Heading for Desktop TOC
                 const dateHeadingDesktop = document.createElement('h3');
                 dateHeadingDesktop.textContent = date;
-                tocList.appendChild(dateHeadingDesktop);
+                tocListDesktop.appendChild(dateHeadingDesktop);
 
                 // Create Date Heading for Mobile TOC
                 const dateHeadingMobile = document.createElement('h3');
                 dateHeadingMobile.textContent = date;
-                tocOverlay.appendChild(dateHeadingMobile);
+                tocOverlayMobile.appendChild(dateHeadingMobile);
 
                 const eventListDesktop = document.createElement('ul');
                 const eventListMobile = document.createElement('ul');
@@ -284,10 +284,12 @@
                     const tocLinkDesktop = document.createElement('a');
                     tocLinkDesktop.href = `#${event.id}`;
                     tocLinkDesktop.textContent = event.title;
+                    tocLinkDesktop.onclick = () => closeTOC(); // Close overlay on mobile when a link is clicked
                     tocItemDesktop.appendChild(tocLinkDesktop);
                     eventListDesktop.appendChild(tocItemDesktop);
 
                     const tocItemMobile = tocItemDesktop.cloneNode(true);
+                    tocItemMobile.onclick = () => closeTOC();
                     eventListMobile.appendChild(tocItemMobile);
 
                     // Split content by sentence
@@ -315,8 +317,8 @@
                     eventsContainer.appendChild(eventDiv);
                 });
 
-                tocList.appendChild(eventListDesktop);
-                tocOverlay.appendChild(eventListMobile);
+                tocListDesktop.appendChild(eventListDesktop);
+                tocOverlayMobile.appendChild(eventListMobile);
             }
         } catch (error) {
             console.error('Error loading events:', error);
@@ -337,6 +339,12 @@
     function toggleTOC() {
         const tocOverlay = document.getElementById('toc-overlay');
         tocOverlay.style.display = tocOverlay.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function closeTOC() {
+        if (window.innerWidth <= 420) {
+            document.getElementById('toc-overlay').style.display = 'none';
+        }
     }
 
     // Load events on page load
