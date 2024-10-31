@@ -6,122 +6,126 @@
     <title>Event Schedule</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Niconne&display=swap" rel="stylesheet">
     <style>
+        /* Basic styles */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #fdf6f0;
             color: #333;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
         }
-        header {
-            background-color: #a52a2a;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-        }
-        header h1 {
-            font-family: 'Niconne', cursive;
-            margin: 0;
-            font-size: 3em;
-        }
-        main {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
+        
+        /* Floating TOC styles */
+        .toc {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 250px;
+            max-height: 80vh;
+            overflow-y: auto;
+            background-color: #fdf0ea;
+            padding: 15px;
+            border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .toc {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            background-color: #fdf0ea;
-            border-radius: 8px;
-        }
+        
         .toc h2 {
             font-size: 1.4em;
             color: #a52a2a;
             font-family: 'Niconne', cursive;
             margin-bottom: 10px;
         }
+        
         .toc ul {
             list-style: none;
             padding: 0;
         }
+        
         .toc li {
             margin-bottom: 5px;
         }
+        
         .toc a {
             color: #a52a2a;
             text-decoration: none;
         }
+        
         .toc a:hover {
             text-decoration: underline;
         }
+        
+        /* Main content styles */
+        main {
+            max-width: 800px;
+            margin-left: 300px; /* Space for the floating TOC */
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
         .event {
             margin: 20px 0;
             padding: 15px;
             border-bottom: 1px solid #ddd;
         }
+        
         .event h2 {
             color: #a52a2a;
             font-size: 1.8em;
             margin-bottom: 5px;
         }
+        
         .event h3 {
             color: #666;
             font-size: 1.2em;
             margin-bottom: 5px;
         }
+        
         .event .description {
             font-style: italic;
             color: #444;
             margin: 0 0 10px;
         }
-        .event p {
-            margin: 10px 0;
-            line-height: 1.6;
-        }
-        .more-text {
-            display: none;
-        }
+        
         .show-more-btn {
-            display: inline-block;
-            margin-top: 10px;
             color: #a52a2a;
             cursor: pointer;
             font-weight: bold;
             border: none;
             background: none;
             padding: 0;
+            margin-top: 10px;
         }
+        
         footer {
             background-color: #a52a2a;
             color: #fff;
             text-align: center;
             padding: 10px;
             position: fixed;
-            width: 100%;
             bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-
-<header>
-    <h1>Event Schedule</h1>
-    <p>November 22 - November 28</p>
-</header>
+<div class="toc" id="toc">
+    <h2>Table of Contents</h2>
+    <ul id="toc-list">
+        <!-- Table of contents will be generated here -->
+    </ul>
+</div>
 
 <main>
-    <div class="toc" id="toc">
-        <h2>Table of Contents</h2>
-        <ul id="toc-list">
-            <!-- Table of contents will be generated here -->
-        </ul>
-    </div>
+    <header>
+        <h1>Event Schedule</h1>
+        <p>November 22 - November 28</p>
+    </header>
 
     <div id="events-container">
         <!-- Events will be loaded here dynamically -->
@@ -183,7 +187,5 @@
     loadEvents();
 </script>
 
-</body>
-</html>
 </body>
 </html>
