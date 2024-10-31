@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Event Schedule</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Niconne&display=swap" rel="stylesheet">
     <style>
@@ -14,10 +14,25 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
         }
-        
-        /* Floating TOC styles */
+
+        header {
+            text-align: center;
+            background-color: #a52a2a;
+            color: #fff;
+            padding: 20px;
+            width: 100%;
+        }
+
+        header h1 {
+            font-family: 'Niconne', cursive;
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        /* Floating TOC styles for desktop */
         .toc {
             position: fixed;
             top: 20px;
@@ -31,66 +46,66 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .toc h2 {
             font-size: 1.4em;
             color: #a52a2a;
             font-family: 'Niconne', cursive;
             margin-bottom: 10px;
         }
-        
+
         .toc ul {
             list-style: none;
             padding: 0;
         }
-        
+
         .toc li {
             margin-bottom: 5px;
         }
-        
+
         .toc a {
             color: #a52a2a;
             text-decoration: none;
         }
-        
+
         .toc a:hover {
             text-decoration: underline;
         }
-        
-        /* Main content styles */
+
+        /* Main content */
         main {
             max-width: 800px;
-            margin-left: 300px; /* Space for the floating TOC */
+            margin: 20px;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .event {
             margin: 20px 0;
             padding: 15px;
             border-bottom: 1px solid #ddd;
         }
-        
+
         .event h2 {
             color: #a52a2a;
             font-size: 1.8em;
             margin-bottom: 5px;
         }
-        
+
         .event h3 {
             color: #666;
             font-size: 1.2em;
             margin-bottom: 5px;
         }
-        
+
         .event .description {
             font-style: italic;
             color: #444;
             margin: 0 0 10px;
         }
-        
+
         .show-more-btn {
             color: #a52a2a;
             cursor: pointer;
@@ -100,15 +115,48 @@
             padding: 0;
             margin-top: 10px;
         }
-        
+
         footer {
             background-color: #a52a2a;
             color: #fff;
             text-align: center;
             padding: 10px;
+            width: 100%;
             position: fixed;
             bottom: 0;
-            width: 100%;
+        }
+
+        /* Responsive styles for iPhone 13 */
+        @media (max-width: 420px) {
+            .toc {
+                position: static;
+                width: 100%;
+                margin-bottom: 20px;
+                box-shadow: none;
+                max-height: none;
+            }
+
+            main {
+                margin: 0 10px;
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .event h2 {
+                font-size: 1.5em;
+            }
+
+            .event h3 {
+                font-size: 1.1em;
+            }
+
+            footer {
+                position: relative;
+                bottom: 0;
+            }
         }
     </style>
 </head>
