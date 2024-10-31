@@ -250,21 +250,25 @@
                 tocList.appendChild(tocItem);
                 tocListOverlay.appendChild(tocItem.cloneNode(true));
 
-                // Create Event Section
-                const eventDiv = document.createElement('div');
+                // Split content into sentences
+                const sentences = event.content.match(/[^.!?]+[.!?]*/g) || []; // Split by sentence
+                const isLongContent = sentences.length > 1;
+                
+                // Construct the preview and hidden content
+                const previewContent = sentences[0];
+                const remainingContent = sentences.slice(1).join(' ');
+
+                // Create Event Section HTML
+                eventDiv = document.createElement('div');
                 eventDiv.classList.add('event');
                 eventDiv.id = event.id;
-
-                // Split content into initial text and remaining text for "Show more" functionality
-                const previewLength = 100; // Customize as desired
-                const isLongContent = event.content.length > previewLength;
 
                 eventDiv.innerHTML = `
                     <h2>${event.title}</h2>
                     <h3>${event.date}</h3>
                     <p class="description">${event.description}</p>
-                    <p>${isLongContent ? event.content.substring(0, previewLength) : event.content}
-                        <span class="more-text" style="display: none;">${isLongContent ? event.content.substring(previewLength) : ''}</span>
+                    <p>${previewContent}
+                        <span class="more-text" style="display: none;">${remainingContent}</span>
                     </p>
                     ${isLongContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
                 `;
@@ -294,6 +298,7 @@
     // Load events on page load
     loadEvents();
 </script>
+
 
 </body>
 </html>
