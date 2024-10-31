@@ -16,6 +16,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: background-color 0.3s;
         }
 
         header {
@@ -25,6 +26,7 @@
             padding: 10px 20px;
             width: 100%;
             box-sizing: border-box;
+            transition: background-color 0.3s;
         }
 
         header h1 {
@@ -42,6 +44,7 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s, background-color 0.3s;
         }
 
         .event {
@@ -64,6 +67,11 @@
             background: none;
             padding: 0;
             margin-top: 10px;
+            transition: color 0.3s;
+        }
+
+        .show-more-btn:hover {
+            color: #a20000;
         }
 
         footer {
@@ -73,6 +81,7 @@
             padding: 10px;
             width: 100%;
             position: relative;
+            transition: background-color 0.3s;
         }
 
         /* Single TOC - Floating Icon and Overlay */
@@ -92,10 +101,17 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .toc-icon:hover {
+            transform: scale(1.1);
+            background-color: #a20000;
         }
 
         .toc-overlay {
             display: none;
+            opacity: 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -106,6 +122,25 @@
             padding: 20px;
             overflow-y: auto;
             box-sizing: border-box;
+            transition: opacity 0.3s ease;
+        }
+
+        .toc-overlay.show {
+            display: flex;
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Centered TOC on larger screens */
+        .toc-content {
+            max-width: 600px;
+            width: 100%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: left;
         }
 
         .toc-overlay h2 {
@@ -133,6 +168,20 @@
         .toc-overlay a {
             color: #444;
             text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .toc-overlay a:hover {
+            color: #a20000;
+        }
+
+        .more-text {
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .more-text.show {
+            display: inline;
         }
     </style>
 </head>
@@ -143,8 +192,9 @@
 
 <!-- TOC overlay -->
 <div class="toc-overlay" id="toc-overlay" onclick="toggleTOC()">
-    <div onclick="event.stopPropagation();">
-        <h2>Table of Contents</h2>
+    <div class="toc-content" onclick="event.stopPropagation();">
+        <h2 id="toc-title"></h2>
+        <!-- TOC entries will be appended here -->
     </div>
 </div>
 
@@ -164,10 +214,14 @@
 </footer>
 
 <script>
+    // Define TOC title
+    const TOC_TITLE = "Table of Contents";
+
     async function loadEvents() {
+        document.getElementById('toc-title').textContent = TOC_TITLE;
         const response = await fetch('events.json');
         const events = await response.json();
-        const tocOverlayContent = document.querySelector('.toc-overlay > div');
+        const tocOverlayContent = document.querySelector('.toc-content');
         const eventsContainer = document.getElementById('events-container');
         
         // Group events by date
@@ -218,7 +272,7 @@
         eventDiv.innerHTML = `
             <h2>${event.title}</h2>
             <h3>${event.date}</h3>
-            <p>${previewContent}<span class="more-text" style="display: none;">${remainingContent}</span></p>
+            <p>${previewContent}<span class="more-text">${remainingContent}</span></p>
             ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
         `;
         container.appendChild(eventDiv);
@@ -229,26 +283,26 @@
         const moreText = button.previousElementSibling.querySelector('.more-text');
         allButtons.forEach(btn => {
             const otherText = btn.previousElementSibling.querySelector('.more-text');
-            if (btn !== button && otherText) otherText.style.display = 'none';
+            if (btn !== button && otherText) otherText.classList.remove('show');
             if (btn !== button) btn.textContent = 'Show more';
         });
 
-        if (moreText.style.display === 'none' || moreText.style.display === '') {
-            moreText.style.display = 'inline';
-            button.textContent = 'Show less';
-        } else {
-            moreText.style.display = 'none';
+        if (moreText.classList.contains('show')) {
+            moreText.classList.remove('show');
             button.textContent = 'Show more';
+        } else {
+            moreText.classList.add('show');
+            button.textContent = 'Show less';
         }
     }
 
     function toggleTOC() {
         const tocOverlay = document.getElementById('toc-overlay');
-        tocOverlay.style.display = tocOverlay.style.display === 'block' ? 'none' : 'block';
+        tocOverlay.classList.toggle('show');
     }
 
     function closeTOC() {
-        document.getElementById('toc-overlay').style.display = 'none';
+        document.getElementById('toc-overlay').classList.remove('show');
     }
 
     // Load events on page load
