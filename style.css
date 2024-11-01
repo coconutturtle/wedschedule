@@ -1,7 +1,7 @@
 /* Basic styles */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #307def;
+    background-color: #fdf6f0;
     color: #333;
     margin: 0;
     padding: 0;
@@ -12,7 +12,7 @@ body {
 
 header {
     text-align: center;
-    background-color: #307def;
+    background-color: #a52a2a;
     color: #fff;
     padding: 10px 20px;
     width: 100%;
@@ -43,13 +43,13 @@ main {
 }
 
 .event h2 {
-    color: #307def;
+    color: #a52a2a;
     font-size: 1.5em;
     margin-bottom: 5px;
 }
 
 .show-more-btn {
-    color: #307def;
+    color: #a52a2a;
     cursor: pointer;
     font-weight: bold;
     border: none;
@@ -82,7 +82,7 @@ main {
     position: fixed;
     bottom: 80px;
     right: 20px;
-    background-color: #307def;
+    background-color: #a52a2a;
     color: white;
     padding: 12px;
     border-radius: 50%;
@@ -130,14 +130,14 @@ main {
 
 .toc-overlay h2 {
     font-size: 1.4em;
-    color: #307def;
+    color: #a52a2a;
     font-family: 'Niconne', cursive;
     margin-bottom: 15px;
 }
 
 .toc-overlay h3 {
     font-size: 1.2em;
-    color: #307def;
+    color: #a52a2a;
     margin-top: 10px;
     margin-bottom: 5px;
 }
