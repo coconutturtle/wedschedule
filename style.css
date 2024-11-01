@@ -48,6 +48,10 @@ main {
     margin-bottom: 5px;
 }
 
+.event h4 {
+    margin-top: 0;
+}
+
 .show-more-btn {
     color: #a80028;
     cursor: pointer;
