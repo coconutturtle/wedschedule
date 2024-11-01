@@ -12,7 +12,7 @@ body {
 
 header {
     text-align: center;
-    background-color: #a52a2a;
+    background-color: #a80028;
     color: #fff;
     padding: 10px 20px;
     width: 100%;
@@ -43,13 +43,13 @@ main {
 }
 
 .event h2 {
-    color: #a52a2a;
+    color: #a80028;
     font-size: 1.5em;
     margin-bottom: 5px;
 }
 
 .show-more-btn {
-    color: #a52a2a;
+    color: #a80028;
     cursor: pointer;
     font-weight: bold;
     border: none;
@@ -82,7 +82,7 @@ main {
     position: fixed;
     bottom: 80px;
     right: 20px;
-    background-color: #a52a2a;
+    background-color: #a80028;
     color: white;
     padding: 12px;
     border-radius: 50%;
@@ -130,14 +130,14 @@ main {
 
 .toc-overlay h2 {
     font-size: 1.4em;
-    color: #a52a2a;
+    color: #a80028;
     font-family: 'Niconne', cursive;
     margin-bottom: 15px;
 }
 
 .toc-overlay h3 {
     font-size: 1.2em;
-    color: #a52a2a;
+    color: #a80028;
     margin-top: 10px;
     margin-bottom: 5px;
 }
