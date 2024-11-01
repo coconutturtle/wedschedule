@@ -48,6 +48,10 @@ main {
     margin-bottom: 5px;
 }
 
+.event h3 {
+    margin-bottom: 0;
+}
+
 .event h4 {
     margin-top: 0;
 }
