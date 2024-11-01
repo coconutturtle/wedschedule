@@ -59,7 +59,6 @@ function createEventSection(event, container) {
 
     eventDiv.innerHTML = `
         <h2>${event.title}</h2>
-        <h3>${event.description}</h3>
         <h3>${event.date}</h3>
         <p>${previewContent}<span class="more-text">${remainingContent}</span></p>
         ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
