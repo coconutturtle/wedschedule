@@ -23,6 +23,42 @@ async function loadEvents() {
     }
 }
 
+// Function to check if an image URL is valid
+async function imageExists(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok;
+    } catch {
+        return false;
+    }
+}
+
+async function createEventSection(event, container) {
+    const eventDiv = document.createElement('div');
+    eventDiv.classList.add('event');
+    eventDiv.id = event.id;
+
+    const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
+    const previewContent = sentences[0];
+    const remainingContent = sentences.slice(1).join(' ');
+
+    // Check if the image exists before adding the <img> tag
+    let imageHtml = '';
+    if (event.image && await imageExists(event.image)) {
+        imageHtml = `<img src="${event.image}" alt="${event.title}" class="event-image">`;
+    }
+
+    eventDiv.innerHTML = `
+        <h2>${event.title}</h2>
+        <h3>${event.description}</h3>
+        <h4>${event.date}</h4>
+        ${imageHtml}
+        <p>${previewContent}<span class="more-text">${remainingContent}</span></p>
+        ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
+    `;
+    container.appendChild(eventDiv);
+}
+
 function createDateHeading(parent, date) {
     const dateHeading = document.createElement('h3');
     dateHeading.textContent = date;
@@ -46,29 +82,6 @@ function createTOCEntry(event, list) {
 
     tocItem.appendChild(tocLink);
     list.appendChild(tocItem);
-}
-
-function createEventSection(event, container) {
-    const eventDiv = document.createElement('div');
-    eventDiv.classList.add('event');
-    eventDiv.id = event.id;
-
-    const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
-    const previewContent = sentences[0];
-    const remainingContent = sentences.slice(1).join(' ');
-
-    // Image inclusion code - START (Added)
-    eventDiv.innerHTML = `
-        <h2>${event.title}</h2>
-        <h3>${event.description}</h3>
-        <h4>${event.date}</h4>
-        ${event.image ? `<img src="${event.image}" alt="${event.title}" class="event-image">` : ''}
-        <p>${previewContent}<span class="more-text">${remainingContent}</span></p>
-        ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
-    `;
-    // Image inclusion code - END
-
-    container.appendChild(eventDiv);
 }
 
 function toggleText(button) {
