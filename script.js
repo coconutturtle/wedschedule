@@ -6,31 +6,54 @@ async function loadEvents() {
         const events = await response.json();
         const tocOverlayContent = document.querySelector('.toc-content');
         const eventsContainer = document.getElementById('events-container');
-
         const groupedEvents = events.reduce((acc, event) => {
-            if (!acc[event.date]) acc[event.date] = [];
+            acc[event.date] = acc[event.date] || [];
             acc[event.date].push(event);
             return acc;
         }, {});
 
-        for (const [date, events] of Object.entries(groupedEvents)) {
-            createDateHeading(tocOverlayContent, date);
+        // Use DocumentFragment to batch DOM updates
+        const tocFragment = document.createDocumentFragment();
+        const eventFragment = document.createDocumentFragment();
+
+        for (const [date, dateEvents] of Object.entries(groupedEvents)) {
+            createDateHeading(tocFragment, date);
             const eventList = document.createElement('ul');
 
-            events.forEach(event => {
-                createTOCEntry(event, eventList);
-                createEventSection(event, eventsContainer);
-            });
+            // Parallel loading of event sections
+            await Promise.all(
+                dateEvents.map(async event => {
+                    createTOCEntry(event, eventList);
+                    await createEventSection(event, eventFragment);
+                })
+            );
 
-            tocOverlayContent.appendChild(eventList);
+            tocFragment.appendChild(eventList);
         }
+
+        tocOverlayContent.appendChild(tocFragment);
+        eventsContainer.appendChild(eventFragment);
+
+        // Initiate lazy loading for images
+        setupLazyLoading();
     } catch (error) {
         console.error("Error loading events:", error);
+        // Optionally display an error message to users
     }
 }
 
-// Function to create event sections with conditional image loading
-function createEventSection(event, container) {
+// Function to check if an image URL is valid
+async function imageExists(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok;
+    } catch {
+        return false;
+    }
+}
+
+// Function to create event section, with conditional image loading
+async function createEventSection(event, container) {
     const eventDiv = document.createElement('div');
     eventDiv.classList.add('event');
     eventDiv.id = event.id;
@@ -39,8 +62,11 @@ function createEventSection(event, container) {
     const previewContent = sentences[0];
     const remainingContent = sentences.slice(1).join(' ');
 
-    // Only include image if the `image` property is present
-    const imageHtml = event.image ? `<img src="${event.image}" alt="${event.title}" class="event-image" loading="lazy">` : '';
+    // Lazy-load images and add them conditionally
+    let imageHtml = '';
+    if (event.image && await imageExists(event.image)) {
+        imageHtml = `<img data-src="${event.image}" alt="${event.title}" class="event-image lazy">`;  // Using data-src for lazy loading
+    }
 
     eventDiv.innerHTML = `
         <h2>${event.title}</h2>
@@ -53,7 +79,26 @@ function createEventSection(event, container) {
     container.appendChild(eventDiv);
 }
 
-// Helper functions
+// Initialize IntersectionObserver for lazy loading images
+function setupLazyLoading() {
+    const lazyImages = document.querySelectorAll('.lazy');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.getAttribute('data-src');  // Assign the actual src
+                img.classList.remove('lazy');
+                observer.unobserve(img);
+            }
+        });
+    }, {
+        rootMargin: "50px",
+        threshold: 0.01
+    });
+
+    lazyImages.forEach(img => observer.observe(img));
+}
+
 function createDateHeading(parent, date) {
     const dateHeading = document.createElement('h3');
     dateHeading.textContent = date;
@@ -66,6 +111,7 @@ function createTOCEntry(event, list) {
     tocLink.href = `#${event.id}`;
     tocLink.textContent = event.title;
 
+    // Smooth scroll on link click
     tocLink.addEventListener('click', (e) => {
         e.preventDefault();
         document.getElementById(event.id).scrollIntoView({
