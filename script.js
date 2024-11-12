@@ -111,18 +111,21 @@ function createTOCEntry(event, list) {
     tocLink.href = `#${event.id}`;
     tocLink.textContent = event.title;
 
-    // Smooth scroll on link click
+    // Improved scroll behavior for smooth and precise scrolling
     tocLink.addEventListener('click', (e) => {
         e.preventDefault();
         document.getElementById(event.id).scrollIntoView({
-            behavior: 'smooth'
+            behavior: 'smooth',
+            block: 'start',   // Ensures the element aligns with the top of the viewport
+            inline: 'nearest' // Center the element horizontally if needed
         });
-        closeTOC();
+        closeTOC();  // Close TOC after scrolling
     });
 
     tocItem.appendChild(tocLink);
     list.appendChild(tocItem);
 }
+
 
 function toggleText(button) {
     const allButtons = document.querySelectorAll('.show-more-btn');
