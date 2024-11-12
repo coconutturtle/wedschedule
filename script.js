@@ -151,10 +151,12 @@ function toggleText(button) {
 function toggleTOC() {
     const tocOverlay = document.getElementById('toc-overlay');
     tocOverlay.classList.toggle('active');
+    document.body.classList.toggle('no-scroll'); // Toggle no-scroll class
 }
 
 function closeTOC() {
     document.getElementById('toc-overlay').classList.remove('active');
+    document.body.classList.remove('no-scroll'); // Remove no-scroll class
 }
 
 loadEvents();
