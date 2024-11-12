@@ -57,13 +57,17 @@ function createEventSection(event, container) {
     const previewContent = sentences[0];
     const remainingContent = sentences.slice(1).join(' ');
 
+    // Image inclusion code - START (Added)
     eventDiv.innerHTML = `
         <h2>${event.title}</h2>
         <h3>${event.description}</h3>
         <h4>${event.date}</h4>
+        ${event.image ? `<img src="${event.image}" alt="${event.title}" class="event-image">` : ''}
         <p>${previewContent}<span class="more-text">${remainingContent}</span></p>
         ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
     `;
+    // Image inclusion code - END
+
     container.appendChild(eventDiv);
 }
 
