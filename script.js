@@ -19,13 +19,11 @@ async function loadEvents() {
             createDateHeading(tocFragment, date);
             const eventList = document.createElement('ul');
 
-            // Use Promise.all to parallelize loading of event sections
-            await Promise.all(
-                dateEvents.map(async event => {
-                    createTOCEntry(event, eventList);
-                    await createEventSection(event, eventFragment);
-                })
-            );
+            // Use Promise.all to parallelize creation of TOC entries and event sections
+            dateEvents.forEach(event => {
+                createTOCEntry(event, eventList);
+                createEventSection(event, eventFragment); // removed await
+            });
 
             tocFragment.appendChild(eventList);
         }
@@ -33,26 +31,14 @@ async function loadEvents() {
         tocOverlayContent.appendChild(tocFragment);
         eventsContainer.appendChild(eventFragment);
 
-        // Initialize lazy loading for images
-        setupLazyLoading();
+        setupLazyLoading();  // Initialize lazy loading for images
     } catch (error) {
         console.error("Error loading events:", error);
     }
 }
 
-// Check if an image URL is valid
-async function imageExists(url) {
-    if (!url) return false;
-    try {
-        const response = await fetch(url, { method: 'HEAD' });
-        return response.ok;
-    } catch {
-        return false;
-    }
-}
-
-// Function to create event sections with optional image loading
-async function createEventSection(event, container) {
+// Function to create event sections with conditional image loading
+function createEventSection(event, container) {
     const eventDiv = document.createElement('div');
     eventDiv.classList.add('event');
     eventDiv.id = event.id;
@@ -61,9 +47,9 @@ async function createEventSection(event, container) {
     const previewContent = sentences[0];
     const remainingContent = sentences.slice(1).join(' ');
 
-    // Load image conditionally and use lazy loading attribute
+    // Assign image HTML only if image URL is present
     let imageHtml = '';
-    if (event.image && await imageExists(event.image)) {
+    if (event.image) {
         imageHtml = `<img data-src="${event.image}" alt="${event.title}" class="event-image lazy">`;
     }
 
@@ -81,15 +67,22 @@ async function createEventSection(event, container) {
 // Initialize IntersectionObserver for lazy loading images
 function setupLazyLoading() {
     const lazyImages = document.querySelectorAll('.lazy');
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
+    const observer = new IntersectionObserver(async entries => {
+        for (const entry of entries) {
             if (entry.isIntersecting) {
                 const img = entry.target;
-                img.src = img.getAttribute('data-src');
-                img.classList.remove('lazy');
+                const imageUrl = img.getAttribute('data-src');
+
+                // Check if image exists before loading
+                if (await imageExists(imageUrl)) {
+                    img.src = imageUrl;
+                    img.classList.remove('lazy');
+                } else {
+                    console.warn(`Image not found: ${imageUrl}`);
+                }
                 observer.unobserve(img);
             }
-        });
+        }
     }, {
         rootMargin: "50px",
         threshold: 0.01
@@ -98,14 +91,24 @@ function setupLazyLoading() {
     lazyImages.forEach(img => observer.observe(img));
 }
 
-// Create date heading for table of contents
+// Helper function to check if an image URL is valid
+async function imageExists(url) {
+    if (!url) return false;
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok;
+    } catch {
+        return false;
+    }
+}
+
+// Other unchanged helper functions
 function createDateHeading(parent, date) {
     const dateHeading = document.createElement('h3');
     dateHeading.textContent = date;
     parent.appendChild(dateHeading);
 }
 
-// Add entries to the table of contents
 function createTOCEntry(event, list) {
     const tocItem = document.createElement('li');
     const tocLink = document.createElement('a');
@@ -124,7 +127,6 @@ function createTOCEntry(event, list) {
     list.appendChild(tocItem);
 }
 
-// Toggle display of additional text in an event
 function toggleText(button) {
     const allButtons = document.querySelectorAll('.show-more-btn');
     const moreText = button.previousElementSibling.querySelector('.more-text');
