@@ -1,62 +1,28 @@
 async function loadEvents() {
-    try {
-        const response = await fetch('events.json');
-        if (!response.ok) throw new Error("Failed to load events.json");
+    const response = await fetch('events.json');
+    const events = await response.json();
+    const tocOverlayContent = document.querySelector('.toc-content');
+    const eventsContainer = document.getElementById('events-container');
 
-        const events = await response.json();
-        const tocOverlayContent = document.querySelector('.toc-content');
-        const eventsContainer = document.getElementById('events-container');
+    const groupedEvents = events.reduce((acc, event) => {
+        if (!acc[event.date]) acc[event.date] = [];
+        acc[event.date].push(event);
+        return acc;
+    }, {});
 
-        const groupedEvents = events.reduce((acc, event) => {
-            if (!acc[event.date]) acc[event.date] = [];
-            acc[event.date].push(event);
-            return acc;
-        }, {});
+    for (const [date, events] of Object.entries(groupedEvents)) {
+        createDateHeading(tocOverlayContent, date);
+        const eventList = document.createElement('ul');
 
-        for (const [date, events] of Object.entries(groupedEvents)) {
-            createDateHeading(tocOverlayContent, date);
-            const eventList = document.createElement('ul');
+        events.forEach(event => {
+            createTOCEntry(event, eventList);
+            createEventSection(event, eventsContainer);
+        });
 
-            events.forEach(event => {
-                createTOCEntry(event, eventList);
-                createEventSection(event, eventsContainer);
-            });
-
-            tocOverlayContent.appendChild(eventList);
-        }
-    } catch (error) {
-        console.error("Error loading events:", error);
+        tocOverlayContent.appendChild(eventList);
     }
 }
 
-// Function to create event sections with conditional image loading
-function createEventSection(event, container) {
-    const eventDiv = document.createElement('div');
-    eventDiv.classList.add('event');
-    eventDiv.id = event.id;
-
-    const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
-    const previewContent = sentences[0];
-    const remainingContent = sentences.slice(1).join(' ');
-
-    // Add the image conditionally with lazy loading attribute
-    let imageHtml = '';
-    if (event.image) {
-        imageHtml = `<img src="${event.image}" alt="${event.title}" class="event-image" loading="lazy">`;
-    }
-
-    eventDiv.innerHTML = `
-        <h2>${event.title}</h2>
-        <h3>${event.description}</h3>
-        <h4>${event.date}</h4>
-        ${imageHtml}
-        <p>${previewContent}<span class="more-text">${remainingContent}</span></p>
-        ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
-    `;
-    container.appendChild(eventDiv);
-}
-
-// Helper functions
 function createDateHeading(parent, date) {
     const dateHeading = document.createElement('h3');
     dateHeading.textContent = date;
@@ -80,6 +46,25 @@ function createTOCEntry(event, list) {
 
     tocItem.appendChild(tocLink);
     list.appendChild(tocItem);
+}
+
+function createEventSection(event, container) {
+    const eventDiv = document.createElement('div');
+    eventDiv.classList.add('event');
+    eventDiv.id = event.id;
+
+    const sentences = event.content.match(/[^.!?]+[.!?]*/g) || [];
+    const previewContent = sentences[0];
+    const remainingContent = sentences.slice(1).join(' ');
+
+    eventDiv.innerHTML = `
+        <h2>${event.title}</h2>
+        <h3>${event.description}</h3>
+        <h4>${event.date}</h4>
+        <p>${previewContent}<span class="more-text">${remainingContent}</span></p>
+        ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
+    `;
+    container.appendChild(eventDiv);
 }
 
 function toggleText(button) {
