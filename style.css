@@ -131,8 +131,10 @@ main {
     transform: translateY(0);
 }
 
+/* Ensuring .toc-content itself also allows for scrolling */
 .toc-content {
-    max-width: 500px;
+    max-height: 80vh; /* Limit height to viewport for better scrolling */
+    overflow-y: auto; /* Enable scrolling inside the content area */
     text-align: center;
 }
 
