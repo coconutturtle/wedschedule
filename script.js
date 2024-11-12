@@ -12,7 +12,6 @@ async function loadEvents() {
             return acc;
         }, {});
 
-        // Use DocumentFragment to batch DOM updates
         const tocFragment = document.createDocumentFragment();
         const eventFragment = document.createDocumentFragment();
 
@@ -20,7 +19,7 @@ async function loadEvents() {
             createDateHeading(tocFragment, date);
             const eventList = document.createElement('ul');
 
-            // Parallel loading of event sections
+            // Use Promise.all to parallelize loading of event sections
             await Promise.all(
                 dateEvents.map(async event => {
                     createTOCEntry(event, eventList);
@@ -34,16 +33,16 @@ async function loadEvents() {
         tocOverlayContent.appendChild(tocFragment);
         eventsContainer.appendChild(eventFragment);
 
-        // Initiate lazy loading for images
+        // Initialize lazy loading for images
         setupLazyLoading();
     } catch (error) {
         console.error("Error loading events:", error);
-        // Optionally display an error message to users
     }
 }
 
-// Function to check if an image URL is valid
+// Check if an image URL is valid
 async function imageExists(url) {
+    if (!url) return false;
     try {
         const response = await fetch(url, { method: 'HEAD' });
         return response.ok;
@@ -52,7 +51,7 @@ async function imageExists(url) {
     }
 }
 
-// Function to create event section, with conditional image loading
+// Function to create event sections with optional image loading
 async function createEventSection(event, container) {
     const eventDiv = document.createElement('div');
     eventDiv.classList.add('event');
@@ -62,10 +61,10 @@ async function createEventSection(event, container) {
     const previewContent = sentences[0];
     const remainingContent = sentences.slice(1).join(' ');
 
-    // Lazy-load images and add them conditionally
+    // Load image conditionally and use lazy loading attribute
     let imageHtml = '';
     if (event.image && await imageExists(event.image)) {
-        imageHtml = `<img data-src="${event.image}" alt="${event.title}" class="event-image lazy">`;  // Using data-src for lazy loading
+        imageHtml = `<img data-src="${event.image}" alt="${event.title}" class="event-image lazy">`;
     }
 
     eventDiv.innerHTML = `
@@ -86,7 +85,7 @@ function setupLazyLoading() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const img = entry.target;
-                img.src = img.getAttribute('data-src');  // Assign the actual src
+                img.src = img.getAttribute('data-src');
                 img.classList.remove('lazy');
                 observer.unobserve(img);
             }
@@ -99,19 +98,20 @@ function setupLazyLoading() {
     lazyImages.forEach(img => observer.observe(img));
 }
 
+// Create date heading for table of contents
 function createDateHeading(parent, date) {
     const dateHeading = document.createElement('h3');
     dateHeading.textContent = date;
     parent.appendChild(dateHeading);
 }
 
+// Add entries to the table of contents
 function createTOCEntry(event, list) {
     const tocItem = document.createElement('li');
     const tocLink = document.createElement('a');
     tocLink.href = `#${event.id}`;
     tocLink.textContent = event.title;
 
-    // Smooth scroll on link click
     tocLink.addEventListener('click', (e) => {
         e.preventDefault();
         document.getElementById(event.id).scrollIntoView({
@@ -124,6 +124,7 @@ function createTOCEntry(event, list) {
     list.appendChild(tocItem);
 }
 
+// Toggle display of additional text in an event
 function toggleText(button) {
     const allButtons = document.querySelectorAll('.show-more-btn');
     const moreText = button.previousElementSibling.querySelector('.more-text');
