@@ -1,25 +1,44 @@
 async function loadEvents() {
-    const response = await fetch('events.json');
-    const events = await response.json();
-    const tocOverlayContent = document.querySelector('.toc-content');
-    const eventsContainer = document.getElementById('events-container');
+    try {
+        const response = await fetch('events.json');
+        if (!response.ok) throw new Error("Failed to load events.json");
 
-    const groupedEvents = events.reduce((acc, event) => {
-        if (!acc[event.date]) acc[event.date] = [];
-        acc[event.date].push(event);
-        return acc;
-    }, {});
+        const events = await response.json();
+        const tocOverlayContent = document.querySelector('.toc-content');
+        const eventsContainer = document.getElementById('events-container');
+        const groupedEvents = events.reduce((acc, event) => {
+            acc[event.date] = acc[event.date] || [];
+            acc[event.date].push(event);
+            return acc;
+        }, {});
 
-    for (const [date, events] of Object.entries(groupedEvents)) {
-        createDateHeading(tocOverlayContent, date);
-        const eventList = document.createElement('ul');
+        // Use DocumentFragment to batch DOM updates
+        const tocFragment = document.createDocumentFragment();
+        const eventFragment = document.createDocumentFragment();
 
-        events.forEach(event => {
-            createTOCEntry(event, eventList);
-            createEventSection(event, eventsContainer);
-        });
+        for (const [date, dateEvents] of Object.entries(groupedEvents)) {
+            createDateHeading(tocFragment, date);
+            const eventList = document.createElement('ul');
 
-        tocOverlayContent.appendChild(eventList);
+            // Parallel loading of event sections
+            await Promise.all(
+                dateEvents.map(async event => {
+                    createTOCEntry(event, eventList);
+                    await createEventSection(event, eventFragment);
+                })
+            );
+
+            tocFragment.appendChild(eventList);
+        }
+
+        tocOverlayContent.appendChild(tocFragment);
+        eventsContainer.appendChild(eventFragment);
+
+        // Initiate lazy loading for images
+        setupLazyLoading();
+    } catch (error) {
+        console.error("Error loading events:", error);
+        // Optionally display an error message to users
     }
 }
 
@@ -33,6 +52,7 @@ async function imageExists(url) {
     }
 }
 
+// Function to create event section, with conditional image loading
 async function createEventSection(event, container) {
     const eventDiv = document.createElement('div');
     eventDiv.classList.add('event');
@@ -42,10 +62,10 @@ async function createEventSection(event, container) {
     const previewContent = sentences[0];
     const remainingContent = sentences.slice(1).join(' ');
 
-    // Check if the image exists before adding the <img> tag
+    // Lazy-load images and add them conditionally
     let imageHtml = '';
     if (event.image && await imageExists(event.image)) {
-        imageHtml = `<img src="${event.image}" alt="${event.title}" class="event-image">`;
+        imageHtml = `<img data-src="${event.image}" alt="${event.title}" class="event-image lazy">`;  // Using data-src for lazy loading
     }
 
     eventDiv.innerHTML = `
@@ -57,6 +77,26 @@ async function createEventSection(event, container) {
         ${remainingContent ? '<button class="show-more-btn" onclick="toggleText(this)">Show more</button>' : ''}
     `;
     container.appendChild(eventDiv);
+}
+
+// Initialize IntersectionObserver for lazy loading images
+function setupLazyLoading() {
+    const lazyImages = document.querySelectorAll('.lazy');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.getAttribute('data-src');  // Assign the actual src
+                img.classList.remove('lazy');
+                observer.unobserve(img);
+            }
+        });
+    }, {
+        rootMargin: "50px",
+        threshold: 0.01
+    });
+
+    lazyImages.forEach(img => observer.observe(img));
 }
 
 function createDateHeading(parent, date) {
