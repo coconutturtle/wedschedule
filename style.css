@@ -162,13 +162,3 @@ main {
     color: #444;
     text-decoration: none;
 }
-
-/* Image styling for events - START (Added) */
-.event img.event-image {
-    max-width: 100%;
-    height: auto;
-    margin-top: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-/* Image styling for events - END */
