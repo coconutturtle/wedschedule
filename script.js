@@ -6,32 +6,24 @@ async function loadEvents() {
         const events = await response.json();
         const tocOverlayContent = document.querySelector('.toc-content');
         const eventsContainer = document.getElementById('events-container');
+
         const groupedEvents = events.reduce((acc, event) => {
-            acc[event.date] = acc[event.date] || [];
+            if (!acc[event.date]) acc[event.date] = [];
             acc[event.date].push(event);
             return acc;
         }, {});
 
-        const tocFragment = document.createDocumentFragment();
-        const eventFragment = document.createDocumentFragment();
-
-        for (const [date, dateEvents] of Object.entries(groupedEvents)) {
-            createDateHeading(tocFragment, date);
+        for (const [date, events] of Object.entries(groupedEvents)) {
+            createDateHeading(tocOverlayContent, date);
             const eventList = document.createElement('ul');
 
-            // Use Promise.all to parallelize creation of TOC entries and event sections
-            dateEvents.forEach(event => {
+            events.forEach(event => {
                 createTOCEntry(event, eventList);
-                createEventSection(event, eventFragment); // removed await
+                createEventSection(event, eventsContainer);
             });
 
-            tocFragment.appendChild(eventList);
+            tocOverlayContent.appendChild(eventList);
         }
-
-        tocOverlayContent.appendChild(tocFragment);
-        eventsContainer.appendChild(eventFragment);
-
-        setupLazyLoading();  // Initialize lazy loading for images
     } catch (error) {
         console.error("Error loading events:", error);
     }
@@ -47,10 +39,10 @@ function createEventSection(event, container) {
     const previewContent = sentences[0];
     const remainingContent = sentences.slice(1).join(' ');
 
-    // Assign image HTML only if image URL is present
+    // Add the image conditionally with lazy loading attribute
     let imageHtml = '';
     if (event.image) {
-        imageHtml = `<img data-src="${event.image}" alt="${event.title}" class="event-image lazy">`;
+        imageHtml = `<img src="${event.image}" alt="${event.title}" class="event-image" loading="lazy">`;
     }
 
     eventDiv.innerHTML = `
@@ -64,45 +56,7 @@ function createEventSection(event, container) {
     container.appendChild(eventDiv);
 }
 
-// Initialize IntersectionObserver for lazy loading images
-function setupLazyLoading() {
-    const lazyImages = document.querySelectorAll('.lazy');
-    const observer = new IntersectionObserver(async entries => {
-        for (const entry of entries) {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                const imageUrl = img.getAttribute('data-src');
-
-                // Check if image exists before loading
-                if (await imageExists(imageUrl)) {
-                    img.src = imageUrl;
-                    img.classList.remove('lazy');
-                } else {
-                    console.warn(`Image not found: ${imageUrl}`);
-                }
-                observer.unobserve(img);
-            }
-        }
-    }, {
-        rootMargin: "50px",
-        threshold: 0.01
-    });
-
-    lazyImages.forEach(img => observer.observe(img));
-}
-
-// Helper function to check if an image URL is valid
-async function imageExists(url) {
-    if (!url) return false;
-    try {
-        const response = await fetch(url, { method: 'HEAD' });
-        return response.ok;
-    } catch {
-        return false;
-    }
-}
-
-// Other unchanged helper functions
+// Helper functions
 function createDateHeading(parent, date) {
     const dateHeading = document.createElement('h3');
     dateHeading.textContent = date;
@@ -115,6 +69,7 @@ function createTOCEntry(event, list) {
     tocLink.href = `#${event.id}`;
     tocLink.textContent = event.title;
 
+    // Smooth scroll on link click
     tocLink.addEventListener('click', (e) => {
         e.preventDefault();
         document.getElementById(event.id).scrollIntoView({
